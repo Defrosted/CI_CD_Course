@@ -1,0 +1,24 @@
+version: '3'
+services:
+    service1:
+        build: ./4.1_docker_compose/service1
+        image: service1
+        depends_on:
+            - service2
+        ports:
+            - '8001:8001'
+        networks:
+            - servicenet
+        environment:
+            PORT: 8001
+            SERVICE2_ADDRESS: service2:8002
+    service2:
+        image: service2
+        expose:
+            - 8002
+        networks:
+            - servicenet
+        environment:
+            PORT: 8002
+networks:
+    servicenet:
