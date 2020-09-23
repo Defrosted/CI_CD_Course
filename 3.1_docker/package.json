@@ -1,0 +1,11 @@
+{
+  "name": "helloworld",
+  "version": "1.0.0",
+  "description": "Docker hello world application",
+  "main": "hello_world.js",
+  "scripts": {
+    "start": "node hello_world.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
