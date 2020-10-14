@@ -1,0 +1,55 @@
+version: '3'
+services:
+    rabbit:
+        image: rabbitmq:latest
+        ports:
+            - 5672:5672
+        networks:
+            - messageNetwork
+    orig:
+        build:
+            context: ./
+            dockerfile: orig.Dockerfile
+        image: messagequeue/orig
+        networks:
+            - messageNetwork
+        depends_on:
+            - rabbit
+        command: ./wait-for-it.sh rabbit:5672 -t 90 -- npm run start:orig
+    imed:
+        build:
+            context: ./
+            dockerfile: imed.Dockerfile
+        image: messagequeue/imed
+        networks:
+            - messageNetwork
+        depends_on:
+            - rabbit
+        command: ./wait-for-it.sh rabbit:5672 -t 90 -- npm run start:imed
+    obse:
+        build:
+            context: ./
+            dockerfile: obse.Dockerfile
+        image: messagequeue/obse
+        networks:
+            - messageNetwork
+        depends_on:
+            - rabbit
+        volumes:
+            - ./messages:/messages
+        command: ./wait-for-it.sh rabbit:5672 -t 90 -- npm run start:obse
+    http-server:
+        build:
+            context: ./
+            dockerfile: http-server.Dockerfile
+        image: messagequeue/http
+        volumes:
+            - ./messages:/messages
+        expose:
+            - 8080
+        ports:
+            - 8080:8080
+        environment:
+            PORT: 8080
+networks:
+    messageNetwork:
